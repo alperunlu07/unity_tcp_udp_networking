@@ -147,6 +147,7 @@ public class Server
             { (int)ClientPackets.networkObjectFVal, ServerHandle.NetworkObjectFVal },
             { (int)ClientPackets.networkObjectSVal, ServerHandle.NetworkObjectSVal },
             { (int)ClientPackets.objectRequest, ServerHandle.ObjectRequest },
+            { (int)ClientPackets.pingRequest, ServerHandle.PingRequest },
         };
         Debug.Log("Initialized packets.");
     }

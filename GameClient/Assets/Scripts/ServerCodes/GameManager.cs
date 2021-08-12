@@ -7,24 +7,18 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    public static Dictionary<int, PlayerManager> players = new Dictionary<int, PlayerManager>();
-    public static Dictionary<int, ItemSpawner> itemSpawners = new Dictionary<int, ItemSpawner>();
-    public static Dictionary<int, ProjectileManager> projectiles = new Dictionary<int, ProjectileManager>();
-    public static Dictionary<int, EnemyManager> enemies = new Dictionary<int, EnemyManager>();
-    public static Dictionary<int, SmileManager> smiles = new Dictionary<int, SmileManager>();
+    public static Dictionary<int, PlayerManager> players = new Dictionary<int, PlayerManager>();    
     public static Dictionary<int, NetworkObjectManager> networkObjects = new Dictionary<int, NetworkObjectManager>();
 
     public GameObject localPlayerPrefab;
-    public GameObject playerPrefab;
-    public GameObject itemSpawnerPrefab;
-    public GameObject projectilePrefab;
-    public GameObject enemyPrefab;
-    public GameObject smilePrefab;
+    public GameObject playerPrefab;   
     public GameObject[] networkObjectsPrefabs;
     public static GameObject guiText;
 
-    private static int second;
-    private static int milisecond;
+    private static int startTime;
+    private int counter = 0;
+    private float lastTime = 0f;
+    private bool control;
 
     private static int ping;
 
@@ -40,15 +34,23 @@ public class GameManager : MonoBehaviour
             Destroy(this);
         }
     }
-
-    public static void CalculatePing(int mili, int id)
+    private void FixedUpdate()
     {
-        var _mili = DateTime.Now.Second * 1000 + DateTime.Now.Millisecond;
-        //Debug.Log("id " + id + " time: " + ping + " nowTime" + _mili);
-
-        ping = (_mili - mili) * 2;
-
-        //Debug.Log("Ping:" + (_mili - ping) * 2 + " ms");
+        if ((Time.time - lastTime) > 1f)
+        {
+            startTime = DateTime.Now.Second * 1000 + DateTime.Now.Millisecond;
+            counter++;
+            ClientSend.SendPing(counter, control);
+            lastTime = Time.time;
+        }
+    }
+    public static void CalculatePing(bool _control, int id)
+    {
+        if (_control)
+        {
+            int currentTime = DateTime.Now.Second * 1000 + DateTime.Now.Millisecond;
+            ping = currentTime - startTime;
+        }
     }
 
     public void OnGUI()
@@ -89,27 +91,7 @@ public class GameManager : MonoBehaviour
         players.Add(_id, _player.GetComponent<PlayerManager>());
     }
 
-    public void CreateItemSpawner(int _spawnerId, Vector3 _position, bool _hasItem)
-    {
-        GameObject _spawner = Instantiate(itemSpawnerPrefab, _position, itemSpawnerPrefab.transform.rotation);
-        _spawner.GetComponent<ItemSpawner>().Initialize(_spawnerId, _hasItem);
-        itemSpawners.Add(_spawnerId, _spawner.GetComponent<ItemSpawner>());
-    }
-
-    public void SpawnProjectile(int _id, Vector3 _position)
-    {
-        GameObject _projectile = Instantiate(projectilePrefab, _position, Quaternion.identity);
-        _projectile.GetComponent<ProjectileManager>().Initialize(_id);
-        projectiles.Add(_id, _projectile.GetComponent<ProjectileManager>());
-    }
-
-    public void SpawnEnemy(int _id, Vector3 _position)
-    {
-        GameObject _enemy = Instantiate(enemyPrefab, _position, Quaternion.identity);
-        _enemy.GetComponent<EnemyManager>().Initialize(_id);
-        enemies.Add(_id, _enemy.GetComponent<EnemyManager>());
-    }
- 
+    
     public void SpawnNetworkObject(int _id, Vector3 _position, int _type)
     {
         if (GameManager.networkObjects.TryGetValue(_id, out NetworkObjectManager __networkObject))

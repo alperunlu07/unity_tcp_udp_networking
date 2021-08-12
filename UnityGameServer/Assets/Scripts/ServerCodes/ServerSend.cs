@@ -266,7 +266,7 @@ public class ServerSend
             _packet.Write(_networkObject.id);
             _packet.Write(_networkObject.transform.position);
 
-            SendUDPDataToAll(_fromClient, _packet);
+            SendTCPDataToAll(_fromClient, _packet);
         }
     }
     public static void NetworkObjectRotation(NetworkObject _networkObject)
@@ -338,14 +338,13 @@ public class ServerSend
         }
     }
 
-    public static void SendPing(int id)
+    public static void SendPing(int _id, bool _control, int _fromClient)
     {
         using (Packet _packet = new Packet((int)ServerPackets.ping))
         {
-            _packet.Write(id);
-            int nowTime = DateTime.Now.Second * 1000 + DateTime.Now.Millisecond;
-            _packet.Write(nowTime);
-            SendUDPDataToAll(_packet);
+            _packet.Write(_id);
+            _packet.Write(_control);
+            SendTCPData(_fromClient, _packet);
         }
     }
     #endregion

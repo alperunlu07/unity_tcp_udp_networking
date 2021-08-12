@@ -158,7 +158,15 @@ public class ClientSend : MonoBehaviour
             requestTime = Time.time;
             //Debug.Log("not pos exist id: " + _id);
         }
-
+    }
+    public static void SendPing(int _id, bool _control)
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.pingRequest))
+        {
+            _packet.Write(_id);
+            _packet.Write(_control);
+            SendTCPData(_packet);
+        }
     }
     #endregion
 }

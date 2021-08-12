@@ -101,4 +101,11 @@ public class ServerHandle
         int id = _packet.ReadInt();
         //ServerSend.SendObjectRequest(id, _fromClient);
     }
+    internal static void PingRequest(int _fromClient, Packet _packet)
+    {
+        int id = _packet.ReadInt();
+        bool control = _packet.ReadBool();
+        control = true;
+        ServerSend.SendPing(id, control, _fromClient);
+    }
 }

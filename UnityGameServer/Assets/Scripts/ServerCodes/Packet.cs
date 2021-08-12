@@ -39,7 +39,8 @@ public enum ClientPackets
     networkObjectState,
     networkObjectFVal,
     networkObjectSVal,
-    objectRequest
+    objectRequest,
+    pingRequest
 
 }
 

@@ -6,9 +6,7 @@ public class NetworkManager : MonoBehaviour
 {
     public static NetworkManager instance;
 
-    public GameObject playerPrefab;
-    public GameObject enemyPrefab;
-    public GameObject projectilePrefab; 
+    public GameObject playerPrefab; 
     public GameObject[] networkObjectPrefabs;
 
     private void Awake()
@@ -27,7 +25,7 @@ public class NetworkManager : MonoBehaviour
     private void Start()
     {
         QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = 90;
+        Application.targetFrameRate = 30;
 
         Server.Start(50, 26950);
     }
@@ -42,18 +40,12 @@ public class NetworkManager : MonoBehaviour
         return Instantiate(playerPrefab, new Vector3(0f, 0f, 0f), Quaternion.identity).GetComponent<Player>();
     }
 
-    public void InstantiateEnemy(Vector3 _position)
-    {
-        Instantiate(enemyPrefab, _position, Quaternion.identity);
-    }
+    
      
     public void InstantiateNetworkObject(Vector3 _position, int _type)
     {
         Instantiate(networkObjectPrefabs[_type], _position, Quaternion.identity);
     }
 
-    public Projectile InstantiateProjectile(Transform _shootOrigin)
-    {
-        return Instantiate(projectilePrefab, _shootOrigin.position + _shootOrigin.forward * 0.7f, Quaternion.identity).GetComponent<Projectile>();
-    }
+   
 }
